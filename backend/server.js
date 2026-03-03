@@ -13,7 +13,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: [
+        'http://localhost:5173', 
+        'http://localhost:3000',
+        'https://anujshahdeo03-3097s-projects.vercel.app',
+        /^https:\/\/newsly.*\.vercel\.app$/
+    ],
     credentials: true,
 }));
 app.use(express.json());
