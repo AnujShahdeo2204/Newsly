@@ -16,7 +16,7 @@ app.use(cors({
     origin: [
         'http://localhost:5173', 
         'http://localhost:3000',
-        'https://anujshahdeo03-3097s-projects.vercel.app',
+        'https://newsly-beta.vercel.app',
         /^https:\/\/newsly.*\.vercel\.app$/
     ],
     credentials: true,

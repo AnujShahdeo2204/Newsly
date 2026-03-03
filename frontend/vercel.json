@@ -6,6 +6,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://newsly-backend-m7cpw361m-anujshahdeo03-3097s-projects.vercel.app"
+    "VITE_API_URL": "https://newsly-backend.vercel.app"
   }
 }
