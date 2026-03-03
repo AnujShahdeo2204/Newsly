@@ -5,9 +5,13 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import newsRoutes from './routes/newsRoutes.js';
 import savedRoutes from './routes/savedRoutes.js';
+import { ensureDbConnection } from './middleware/dbMiddleware.js';
 
 dotenv.config();
-connectDB();
+connectDB().catch((error) => {
+    console.error(`⚠️  MongoDB not available: ${error.message}`);
+    console.error(`⚠️  Auth and saved features will be unavailable until DB connection recovers.`);
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,9 +28,9 @@ app.use(cors({
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', ensureDbConnection, authRoutes);
 app.use('/api/news', newsRoutes);
-app.use('/api/saved', savedRoutes);
+app.use('/api/saved', ensureDbConnection, savedRoutes);
 
 // Health check
 app.get('/', (req, res) => {
