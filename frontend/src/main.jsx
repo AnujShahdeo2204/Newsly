@@ -7,7 +7,13 @@ import './index.css'
 import axios from 'axios'
 
 // Configure axios base URL
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// In production (Vercel), use the deployed backend URL
+// In development, use localhost
+const API_URL = import.meta.env.PROD 
+  ? 'https://newsly-backend.vercel.app'
+  : (import.meta.env.VITE_API_URL || 'http://localhost:5000');
+
+axios.defaults.baseURL = API_URL;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
