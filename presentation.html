@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsly - Project Presentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAV BAR */
+        #nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 28px;
+            background: rgba(15, 15, 25, 0.95);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        #nav .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #nav .controls {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        #nav .slide-counter {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        #nav button {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+            padding: 7px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all .2s;
+        }
+
+        #nav button:hover {
+            background: rgba(99, 102, 241, 0.35);
+            color: #fff;
+        }
+
+        #nav button:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        /* PROGRESS BAR */
+        #progress {
+            height: 3px;
+            background: rgba(99, 102, 241, 0.2);
+            flex-shrink: 0;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            transition: width .4s ease;
+        }
+
+        /* SLIDES AREA */
+        #slides-viewport {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 60px;
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all .45s cubic-bezier(.4, 0, .2, 1);
+            pointer-events: none;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slide.exit {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        /* SLIDE LAYOUTS */
+        .slide-content {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* HERO SLIDE */
+        #slide-0 {
+            background: radial-gradient(ellipse at 30% 40%, rgba(99, 102, 241, .18) 0%, transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(168, 85, 247, .12) 0%, transparent 60%), #0a0a0f;
+            text-align: center;
+        }
+
+        #slide-0 .hero-emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-12px)
+            }
+        }
+
+        #slide-0 h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        #slide-0 .subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            margin-top: 14px;
+        }
+
+        #slide-0 .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid;
+        }
+
+        .badge-blue {
+            background: rgba(99, 102, 241, .15);
+            border-color: rgba(99, 102, 241, .5);
+            color: #a5b4fc;
+        }
+
+        .badge-purple {
+            background: rgba(168, 85, 247, .15);
+            border-color: rgba(168, 85, 247, .5);
+            color: #d8b4fe;
+        }
+
+        .badge-green {
+            background: rgba(34, 197, 94, .15);
+            border-color: rgba(34, 197, 94, .5);
+            color: #86efac;
+        }
+
+        .badge-orange {
+            background: rgba(249, 115, 22, .15);
+            border-color: rgba(249, 115, 22, .5);
+            color: #fdba74;
+        }
+
+        .badge-pink {
+            background: rgba(236, 72, 153, .15);
+            border-color: rgba(236, 72, 153, .5);
+            color: #f9a8d4;
+        }
+
+        .badge-yellow {
+            background: rgba(234, 179, 8, .15);
+            border-color: rgba(234, 179, 8, .5);
+            color: #fde047;
+        }
+
+        /* SLIDE HEADERS */
+        .slide-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+
+        .slide-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #f1f5f9;
+            margin-bottom: 28px;
+            line-height: 1.2;
+        }
+
+        .slide-title span {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* CARD GRIDS */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 14px;
+            padding: 22px;
+            transition: border-color .3s;
+        }
+
+        .card:hover {
+            border-color: rgba(99, 102, 241, .5);
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+        }
+
+        .card p {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* FLOW / TIMELINE */
+        .flow {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .flow-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, .2), rgba(168, 85, 247, .2));
+            border: 1px solid rgba(99, 102, 241, .4);
+            border-radius: 12px;
+            padding: 14px 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #c7d2fe;
+        }
+
+        .flow-arrow {
+            color: #6366f1;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            padding: 0 4px;
+        }
+
+        /* CODE BLOCK */
+        .code-block {
+            background: #0d1117;
+            border: 1px solid rgba(99, 102, 241, .25);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.78rem;
+            line-height: 1.7;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .code-block .kw {
+            color: #ff79c6;
+        }
+
+        .code-block .str {
+            color: #f1fa8c;
+        }
+
+        .code-block .fn {
+            color: #50fa7b;
+        }
+
+        .code-block .cm {
+            color: #6272a4;
+        }
+
+        .code-block .num {
+            color: #bd93f9;
+        }
+
+        .code-block .obj {
+            color: #8be9fd;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background: rgba(99, 102, 241, .2);
+            color: #a5b4fc;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            color: #cbd5e1;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, .03);
+        }
+
+        /* LIST */
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+            font-size: 0.88rem;
+            color: #cbd5e1;
+        }
+
+        .checklist li .icon {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+
+        .icon-green {
+            background: rgba(34, 197, 94, .2);
+            color: #86efac;
+        }
+
+        .icon-blue {
+            background: rgba(59, 130, 246, .2);
+            color: #93c5fd;
+        }
+
+        .icon-purple {
+            background: rgba(168, 85, 247, .2);
+            color: #d8b4fe;
+        }
+
+        .icon-orange {
+            background: rgba(249, 115, 22, .2);
+            color: #fdba74;
+        }
+
+        /* VIVA QUESTION CARDS */
+        .viva-q {
+            background: rgba(255, 255, 255, .04);
+            border-left: 3px solid #6366f1;
+            border-radius: 0 12px 12px 0;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+        }
+
+        .viva-q .q {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 6px;
+        }
+
+        .viva-q .a {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .viva-q .tag {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .tag-easy {
+            background: rgba(34, 197, 94, .2);
+            color: #86efac;
+        }
+
+        .tag-med {
+            background: rgba(234, 179, 8, .2);
+            color: #fde047;
+        }
+
+        .tag-hard {
+            background: rgba(239, 68, 68, .2);
+            color: #fca5a5;
+        }
+
+        /* ARCH DIAGRAM */
+        .arch {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .arch-layer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .arch-box {
+            background: rgba(99, 102, 241, .15);
+            border: 1px solid rgba(99, 102, 241, .4);
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #a5b4fc;
+            text-align: center;
+            min-width: 130px;
+        }
+
+        .arch-arrow {
+            color: #6366f1;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        /* TWO COLUMN */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* DIVIDER */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, .5), transparent);
+            margin: 16px 0;
+        }
+
+        /* FOOTER HINT */
+        .kbd {
+            background: rgba(255, 255, 255, .07);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 5px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        /* Scrollbar */
+        .slide::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, .4);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <div id="nav">
+        <div class="logo">📰 Newsly</div>
+        <div class="controls">
+            <span class="slide-counter" id="counter">1 / 16</span>
+            <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+    <div id="progress">
+        <div id="progress-bar"></div>
+    </div>
+
+    <!-- ===================== SLIDES ===================== -->
+    <div id="slides-viewport">
+
+        <!-- SLIDE 0: TITLE -->
+        <div class="slide active" id="slide-0">
+            <div class="hero-emoji">📰</div>
+            <h1>Newsly</h1>
+            <p class="subtitle">A Full-Stack News Web Application &nbsp;|&nbsp; 3rd Year College Project</p>
+            <div class="badges">
+                <span class="badge badge-blue">React.js</span>
+                <span class="badge badge-green">Node.js</span>
+                <span class="badge badge-purple">MongoDB</span>
+                <span class="badge badge-orange">Express.js</span>
+                <span class="badge badge-pink">JWT Auth</span>
+                <span class="badge badge-yellow">NewsAPI</span>
+            </div>
+            <p style="margin-top:36px;color:#475569;font-size:0.8rem;">Press <span class="kbd">→</span> or click
+                <strong>Next</strong> to navigate
+            </p>
+        </div>
+
+        <!-- SLIDE 1: WHAT IS NEWSLY -->
+        <div class="slide" id="slide-1">
+            <div class="slide-content">
+                <p class="slide-label">Introduction</p>
+                <h2 class="slide-title">What is <span>Newsly?</span></h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-icon">🎯</div>
+                        <h3>Purpose</h3>
+                        <p>Newsly is a modern, responsive news web application that fetches real-time news headlines
+                            from the internet and displays them in a beautiful UI with user authentication.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">👤</div>
+                        <h3>User Features</h3>
+                        <p>Users can register/login, browse breaking news by category, search for any topic, and save
+                            articles to read later — all in one place.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🌐</div>
+                        <h3>Real-time Data</h3>
+                        <p>News articles are fetched live from <strong>NewsAPI.org</strong> — a third-party news
+                            aggregator covering hundreds of sources worldwide.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🎓</div>
+                        <h3>Project Type</h3>
+                        <p>3rd Year B.E./B.Tech Computer Science project demonstrating full-stack MERN development with
+                            REST APIs, JWT security, and database persistence.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: TECH STACK -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <p class="slide-label">Technology</p>
+                <h2 class="slide-title">Tech Stack <span>Used</span></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Layer</th>
+                            <th>Technology</th>
+                            <th>Version</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Frontend</td>
+                            <td>⚛️ React.js + Vite</td>
+                            <td>18.x</td>
+                            <td>Build UI components &amp; pages</td>
+                        </tr>
+                        <tr>
+                            <td>Routing</td>
+                            <td>🔀 React Router DOM</td>
+                            <td>v6</td>
+                            <td>SPA client-side navigation</td>
+                        </tr>
+                        <tr>
+                            <td>Backend</td>
+                            <td>🟢 Node.js + Express</td>
+                            <td>18.x + 4.x</td>
+                            <td>REST API server</td>
+                        </tr>
+                        <tr>
+                            <td>Database</td>
+                            <td>🍃 MongoDB + Mongoose</td>
+                            <td>8.x</td>
+                            <td>Store users &amp; saved articles</td>
+                        </tr>
+                        <tr>
+                            <td>Auth</td>
+                            <td>🔐 JWT (jsonwebtoken)</td>
+                            <td>9.x</td>
+                            <td>Stateless authentication</td>
+                        </tr>
+                        <tr>
+                            <td>Password</td>
+                            <td>🔑 bcryptjs</td>
+                            <td>2.x</td>
+                            <td>Hash passwords securely</td>
+                        </tr>
+                        <tr>
+                            <td>HTTP Client</td>
+                            <td>📡 Axios</td>
+                            <td>1.x</td>
+                            <td>Call NewsAPI from backend</td>
+                        </tr>
+                        <tr>
+                            <td>News Source</td>
+                            <td>📰 NewsAPI.org</td>
+                            <td>v2</td>
+                            <td>Real-time news data</td>
+                        </tr>
+                        <tr>
+                            <td>Dev Tool</td>
+                            <td>🔄 Nodemon</td>
+                            <td>3.x</td>
+                            <td>Auto-restart server on changes</td>
+                        </tr>
+                        <tr>
+                            <td>Env Config</td>
+                            <td>⚙️ dotenv</td>
+                            <td>16.x</td>
+                            <td>Manage environment variables</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: PROJECT STRUCTURE -->
+        <div class="slide" id="slide-3">
+            <div class="slide-content" style="max-width:1100px;">
+                <p class="slide-label">Architecture</p>
+                <h2 class="slide-title" style="margin-bottom:18px;">Project <span>Folder Structure</span></h2>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+                    <!-- BACKEND TREE -->
+                    <div
+                        style="background:#0d1117;border:1px solid rgba(99,102,241,.3);border-radius:14px;padding:18px;">
+                        <p
+                            style="color:#6366f1;font-weight:800;font-size:0.9rem;margin-bottom:14px;border-bottom:1px solid rgba(99,102,241,.2);padding-bottom:8px;">
+                            � Backend — Node.js + Express</p>
+                        <div style="font-family:'Courier New',monospace;font-size:0.8rem;line-height:2;">
+                            <div style="color:#94a3b8;">📁 <strong style="color:#c7d2fe;">Newsly/backend/</strong></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#f9a8d4;">server.js</span> <span
+                                    style="color:#475569;font-size:0.72rem;"> ← Entry point</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 🔒 <span style="color:#fde047;">.env</span>
+                                <span style="color:#475569;font-size:0.72rem;"> ← Secret API keys</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">package.json</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📂 <span
+                                    style="color:#86efac;font-weight:700;">config/</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">└── 📄 <span
+                                    style="color:#cbd5e1;">db.js</span> <span style="color:#475569;font-size:0.72rem;">
+                                    ← MongoDB connect</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📂 <span
+                                    style="color:#86efac;font-weight:700;">routes/</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">authRoutes.js</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">newsRoutes.js</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">└── 📄 <span
+                                    style="color:#cbd5e1;">savedRoutes.js</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📂 <span
+                                    style="color:#86efac;font-weight:700;">controllers/</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">authController.js</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">newsController.js</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">└── 📄 <span
+                                    style="color:#cbd5e1;">savedController.js</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📂 <span
+                                    style="color:#86efac;font-weight:700;">models/</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">User.js</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">└── 📄 <span
+                                    style="color:#cbd5e1;">SavedArticle.js</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">└── 📂 <span
+                                    style="color:#86efac;font-weight:700;">middleware/</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">└── 📄 <span
+                                    style="color:#cbd5e1;">authMiddleware.js</span></div>
+                        </div>
+                    </div>
+
+                    <!-- FRONTEND TREE -->
+                    <div
+                        style="background:#0d1117;border:1px solid rgba(168,85,247,.3);border-radius:14px;padding:18px;">
+                        <p
+                            style="color:#a855f7;font-weight:800;font-size:0.9rem;margin-bottom:14px;border-bottom:1px solid rgba(168,85,247,.2);padding-bottom:8px;">
+                            ⚛️ Frontend — React + Vite</p>
+                        <div style="font-family:'Courier New',monospace;font-size:0.8rem;line-height:2;">
+                            <div style="color:#94a3b8;">📁 <strong style="color:#c7d2fe;">Newsly/frontend/src/</strong>
+                            </div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#f9a8d4;">main.jsx</span> <span
+                                    style="color:#475569;font-size:0.72rem;"> ← React entry</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#f9a8d4;">App.jsx</span> <span
+                                    style="color:#475569;font-size:0.72rem;"> ← Routes setup</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 🎨 <span
+                                    style="color:#fde047;">index.css</span> <span
+                                    style="color:#475569;font-size:0.72rem;"> ← Global styles</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📂 <span
+                                    style="color:#d8b4fe;font-weight:700;">pages/</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">HomePage.jsx</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">CategoryPage.jsx</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">SearchPage.jsx</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">LoginPage.jsx</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">RegisterPage.jsx</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">└── 📄 <span
+                                    style="color:#cbd5e1;">SavedPage.jsx</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">├── 📂 <span
+                                    style="color:#d8b4fe;font-weight:700;">components/</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">Header.jsx</span> &nbsp;<span
+                                    style="color:#cbd5e1;">Footer.jsx</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">├── 📄 <span
+                                    style="color:#cbd5e1;">NewsCard.jsx</span> &nbsp;<span
+                                    style="color:#cbd5e1;">HeroCard.jsx</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">└── 📄 <span
+                                    style="color:#cbd5e1;">PrivateRoute.jsx</span> &nbsp;<span
+                                    style="color:#cbd5e1;">Spinner.jsx</span></div>
+                            <div style="margin-left:16px;color:#94a3b8;">└── 📂 <span
+                                    style="color:#d8b4fe;font-weight:700;">context/</span></div>
+                            <div style="margin-left:40px;color:#94a3b8;">└── 📄 <span
+                                    style="color:#cbd5e1;">AuthContext.js</span> <span
+                                    style="color:#475569;font-size:0.72rem;"> ← Global auth state</span></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: SYSTEM ARCHITECTURE -->
+        <div class="slide" id="slide-4">
+            <div class="slide-content">
+                <p class="slide-label">Design</p>
+                <h2 class="slide-title">System <span>Architecture</span></h2>
+                <div class="arch">
+                    <div class="arch-layer">
+                        <div class="arch-box"
+                            style="background:rgba(236,72,153,.15);border-color:rgba(236,72,153,.5);color:#f9a8d4;min-width:500px;">
+                            🌐 User's Browser — React Frontend (Vite Dev Server, Port 5173)</div>
+                    </div>
+                    <div class="arch-arrow">↕ HTTP/HTTPS (Axios REST calls)</div>
+                    <div class="arch-layer">
+                        <div class="arch-box" style="min-width:500px;">🟢 Express Server — Node.js Backend (Port 5000)
+                        </div>
+                    </div>
+                    <div class="arch-layer" style="gap:20px;margin-top:4px;">
+                        <div class="arch-arrow" style="transform:rotate(0deg)">
+                            ↙&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↘
+                        </div>
+                    </div>
+                    <div class="arch-layer" style="gap:30px;">
+                        <div class="arch-box"
+                            style="background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.5);color:#86efac;">🍃
+                            MongoDB Atlas<br><small>Store Users &amp; Saved Articles</small></div>
+                        <div class="arch-box"
+                            style="background:rgba(249,115,22,.15);border-color:rgba(249,115,22,.5);color:#fdba74;">📰
+                            NewsAPI.org<br><small>Live News Headlines</small></div>
+                    </div>
+                </div>
+                <div class="divider" style="margin-top:28px;"></div>
+                <div class="grid-3" style="margin-top:16px;">
+                    <div class="card" style="text-align:center;padding:14px;"><strong
+                            style="color:#f9a8d4">Frontend</strong>
+                        <p style="font-size:0.75rem;margin-top:4px">React renders UI, calls backend APIs using Axios</p>
+                    </div>
+                    <div class="card" style="text-align:center;padding:14px;"><strong
+                            style="color:#a5b4fc">Backend</strong>
+                        <p style="font-size:0.75rem;margin-top:4px">Express handles routes, validates JWT, fetches news
+                        </p>
+                    </div>
+                    <div class="card" style="text-align:center;padding:14px;"><strong
+                            style="color:#86efac">Database</strong>
+                        <p style="font-size:0.75rem;margin-top:4px">MongoDB stores persistent data via Mongoose schemas
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: BACKEND SERVER -->
+        <div class="slide" id="slide-5">
+            <div class="slide-content">
+                <p class="slide-label">Backend — server.js</p>
+                <h2 class="slide-title">The Entry Point — <span>server.js</span></h2>
+                <div class="two-col">
+                    <div>
+                        <div class="code-block">
+                            <span class="kw">import</span> express <span class="kw">from</span> <span
+                                class="str">'express'</span>;
+                            <span class="kw">import</span> dotenv <span class="kw">from</span> <span
+                                class="str">'dotenv'</span>;
+                            <span class="kw">import</span> cors <span class="kw">from</span> <span
+                                class="str">'cors'</span>;
+                            <span class="kw">import</span> connectDB <span class="kw">from</span> <span
+                                class="str">'./config/db.js'</span>;
+
+                            dotenv.<span class="fn">config</span>();
+                            <span class="fn">connectDB</span>();
+
+                            <span class="kw">const</span> app = <span class="fn">express</span>();
+                            <span class="kw">const</span> PORT = process.env.PORT || <span class="num">5000</span>;
+
+                            app.<span class="fn">use</span>(<span class="fn">cors</span>({ origin: [<span
+                                class="str">'http://localhost:5173'</span>] }));
+                            app.<span class="fn">use</span>(express.<span class="fn">json</span>());
+
+                            app.<span class="fn">use</span>(<span class="str">'/api/auth'</span>, authRoutes);
+                            app.<span class="fn">use</span>(<span class="str">'/api/news'</span>, newsRoutes);
+                            app.<span class="fn">use</span>(<span class="str">'/api/saved'</span>, savedRoutes);
+
+                            app.<span class="fn">listen</span>(PORT, () => console.<span class="fn">log</span>(<span
+                                class="str">`Server running`</span>));
+                        </div>
+                    </div>
+                    <div>
+                        <ul class="checklist">
+                            <li><span class="icon icon-blue">1</span>
+                                <div><strong>dotenv.config()</strong> — Loads secret keys from <code>.env</code> file
+                                    (DB URL, JWT secret, NewsAPI key)</div>
+                            </li>
+                            <li><span class="icon icon-green">2</span>
+                                <div><strong>connectDB()</strong> — Connects to MongoDB Atlas before anything else runs
+                                </div>
+                            </li>
+                            <li><span class="icon icon-purple">3</span>
+                                <div><strong>CORS</strong> — Allows frontend (port 5173) to talk to backend (port 5000).
+                                    Without this, browser blocks requests.</div>
+                            </li>
+                            <li><span class="icon icon-orange">4</span>
+                                <div><strong>express.json()</strong> — Parses incoming JSON request bodies so we can
+                                    read <code>req.body</code></div>
+                            </li>
+                            <li><span class="icon icon-blue">5</span>
+                                <div><strong>3 Route modules</strong> — Auth, News, Saved. All prefixed with
+                                    <code>/api/</code>
+                                </div>
+                            </li>
+                            <li><span class="icon icon-green">6</span>
+                                <div><strong>app.listen(5000)</strong> — Starts the HTTP server on port 5000</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: AUTH SYSTEM -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <p class="slide-label">Backend — Authentication</p>
+                <h2 class="slide-title">How <span>User Auth</span> Works</h2>
+                <div class="two-col">
+                    <div>
+                        <p style="color:#a855f7;font-weight:700;margin-bottom:10px;">User Model (MongoDB Schema)</p>
+                        <div class="code-block">
+                            <span class="cm">// models/User.js</span>
+                            <span class="kw">const</span> userSchema = <span class="fn">Schema</span>({
+                            name: { type: String, required: <span class="kw">true</span> },
+                            email: { type: String, unique: <span class="kw">true</span> },
+                            password: { type: String, required: <span class="kw">true</span> },
+                            isAdmin: { type: Boolean, default: <span class="kw">false</span> }
+                            });
+
+                            <span class="cm">// Auto-hash password before saving</span>
+                            userSchema.<span class="fn">pre</span>(<span class="str">'save'</span>, <span
+                                class="kw">async</span> <span class="kw">function</span>() {
+                            <span class="kw">const</span> salt = <span class="kw">await</span> bcrypt.<span
+                                class="fn">genSalt</span>(<span class="num">10</span>);
+                            <span class="kw">this</span>.password = <span class="kw">await</span> bcrypt.<span
+                                class="fn">hash</span>(<span class="kw">this</span>.password, salt);
+                            });
+                        </div>
+                    </div>
+                    <div>
+                        <p style="color:#6366f1;font-weight:700;margin-bottom:10px;">JWT Flow (Login → Access)</p>
+                        <div class="flow" style="flex-direction:column;gap:6px;align-items:stretch;">
+                            <div class="flow-box">1️⃣ POST /api/auth/register — User sends name + email + password</div>
+                            <div style="text-align:center;color:#6366f1;">↓</div>
+                            <div class="flow-box">2️⃣ bcrypt hashes the password &amp; saves User to MongoDB</div>
+                            <div style="text-align:center;color:#6366f1;">↓</div>
+                            <div class="flow-box">3️⃣ Server returns JWT Token (valid 30 days)</div>
+                            <div style="text-align:center;color:#6366f1;">↓</div>
+                            <div class="flow-box">4️⃣ Frontend stores token in localStorage</div>
+                            <div style="text-align:center;color:#6366f1;">↓</div>
+                            <div class="flow-box">5️⃣ Every protected request sends:
+                                <code>Authorization: Bearer &lt;token&gt;</code>
+                            </div>
+                            <div style="text-align:center;color:#6366f1;">↓</div>
+                            <div class="flow-box">6️⃣ authMiddleware.js verifies token → grants access</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: DATABASE MODELS -->
+        <div class="slide" id="slide-7">
+            <div class="slide-content">
+                <p class="slide-label">Database</p>
+                <h2 class="slide-title">MongoDB <span>Data Models</span></h2>
+                <div class="grid-2">
+                    <div>
+                        <p style="color:#86efac;font-weight:700;margin-bottom:10px;">📄 User Collection</p>
+                        <div class="code-block">
+                            <span class="cm">// What 1 user document looks like in MongoDB:</span>
+                            {
+                            <span class="str">"_id"</span>: <span class="str">"64abc..."</span>,
+                            <span class="str">"name"</span>: <span class="str">"Anuj Sharma"</span>,
+                            <span class="str">"email"</span>: <span class="str">"anuj@gmail.com"</span>,
+                            <span class="str">"password"</span>: <span class="str">"$2b$10$hashedPassword..."</span>,
+                            <span class="str">"isAdmin"</span>: <span class="kw">false</span>,
+                            <span class="str">"avatar"</span>: <span class="str">""</span>,
+                            <span class="str">"createdAt"</span>: <span class="str">"2024-02-21T..."</span>
+                            }
+                        </div>
+                    </div>
+                    <div>
+                        <p style="color:#fdba74;font-weight:700;margin-bottom:10px;">📄 SavedArticle Collection</p>
+                        <div class="code-block">
+                            <span class="cm">// 1 saved article document:</span>
+                            {
+                            <span class="str">"_id"</span>: <span class="str">"64xyz..."</span>,
+                            <span class="str">"user"</span>: <span class="str">"64abc..."</span>, <span class="cm">//
+                                ref → User</span>
+                            <span class="str">"title"</span>: <span class="str">"Breaking News..."</span>,
+                            <span class="str">"description"</span>: <span class="str">"A short summary..."</span>,
+                            <span class="str">"url"</span>: <span class="str">"https://..."</span>,
+                            <span class="str">"urlToImage"</span>: <span class="str">"https://img..."</span>,
+                            <span class="str">"source"</span>: <span class="str">"BBC News"</span>,
+                            <span class="str">"category"</span>: <span class="str">"technology"</span>
+                            }
+                            <span class="cm">// Unique index: {user, url} — prevents duplicates</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="grid-3">
+                    <div class="card" style="padding:14px;text-align:center"><strong
+                            style="color:#86efac">References</strong>
+                        <p style="font-size:0.75rem;margin-top:4px">SavedArticle.user is a foreign key pointing to
+                            User._id — this links articles to their owner</p>
+                    </div>
+                    <div class="card" style="padding:14px;text-align:center"><strong style="color:#fdba74">Unique
+                            Index</strong>
+                        <p style="font-size:0.75rem;margin-top:4px">Compound index on {user,url} prevents the same user
+                            from saving the same article twice</p>
+                    </div>
+                    <div class="card" style="padding:14px;text-align:center"><strong
+                            style="color:#a5b4fc">Timestamps</strong>
+                        <p style="font-size:0.75rem;margin-top:4px">Mongoose auto-adds createdAt &amp; updatedAt fields
+                            to both models</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: API ENDPOINTS -->
+        <div class="slide" id="slide-8">
+            <div class="slide-content">
+                <p class="slide-label">Backend — REST API</p>
+                <h2 class="slide-title">All <span>API Endpoints</span></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Auth?</th>
+                            <th>What it Does</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-green" style="padding:2px 8px;font-size:0.7rem">POST</span>
+                            </td>
+                            <td>/api/auth/register</td>
+                            <td>❌ Public</td>
+                            <td>Create new user account, returns JWT token</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-green" style="padding:2px 8px;font-size:0.7rem">POST</span>
+                            </td>
+                            <td>/api/auth/login</td>
+                            <td>❌ Public</td>
+                            <td>Verify credentials, returns JWT token</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-blue" style="padding:2px 8px;font-size:0.7rem">GET</span></td>
+                            <td>/api/auth/profile</td>
+                            <td>✅ Private</td>
+                            <td>Get logged-in user's profile data</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-blue" style="padding:2px 8px;font-size:0.7rem">GET</span></td>
+                            <td>/api/news/headlines</td>
+                            <td>❌ Public</td>
+                            <td>Fetch top headlines from NewsAPI (with category filter)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-blue" style="padding:2px 8px;font-size:0.7rem">GET</span></td>
+                            <td>/api/news/search</td>
+                            <td>❌ Public</td>
+                            <td>Search NewsAPI by keyword query</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-blue" style="padding:2px 8px;font-size:0.7rem">GET</span></td>
+                            <td>/api/saved</td>
+                            <td>✅ Private</td>
+                            <td>Get all saved articles for logged-in user</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-blue" style="padding:2px 8px;font-size:0.7rem">GET</span></td>
+                            <td>/api/saved/check</td>
+                            <td>✅ Private</td>
+                            <td>Check if a specific article is already saved</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-green" style="padding:2px 8px;font-size:0.7rem">POST</span>
+                            </td>
+                            <td>/api/saved</td>
+                            <td>✅ Private</td>
+                            <td>Save an article to user's reading list</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-orange" style="padding:2px 8px;font-size:0.7rem">DELETE</span>
+                            </td>
+                            <td>/api/saved/:id</td>
+                            <td>✅ Private</td>
+                            <td>Remove a saved article by its MongoDB ID</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: FRONTEND PAGES -->
+        <div class="slide" id="slide-9">
+            <div class="slide-content">
+                <p class="slide-label">Frontend</p>
+                <h2 class="slide-title">Frontend <span>Pages & Routing</span></h2>
+                <div class="grid-3" style="margin-bottom:18px;">
+                    <div class="card">
+                        <div class="card-icon">🏠</div>
+                        <h3>HomePage.jsx</h3>
+                        <p>Displays top breaking news. Has a <strong>HeroCard</strong> for the featured article and a
+                            grid of NewsCards below. Fetches <code>/api/news/headlines</code>.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📂</div>
+                        <h3>CategoryPage.jsx</h3>
+                        <p>Shows news filtered by category (Technology, Sports, Business, etc.). The URL is
+                            <code>/category/:category</code> — category is read from URL params.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔍</div>
+                        <h3>SearchPage.jsx</h3>
+                        <p>Allows users to type a keyword and search for articles. Calls
+                            <code>/api/news/search?q=query</code> on the backend.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔐</div>
+                        <h3>LoginPage.jsx</h3>
+                        <p>Email + password form. On success, stores JWT token in <code>localStorage</code> and
+                            redirects to home. Uses AuthContext to update global state.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📝</div>
+                        <h3>RegisterPage.jsx</h3>
+                        <p>Sign-up form with name, email, password fields. Calls <code>POST /api/auth/register</code>.
+                            On success, auto-logs user in.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔖</div>
+                        <h3>SavedPage.jsx</h3>
+                        <p>Shows user's saved articles. This is a <strong>Protected Route</strong> — only accessible
+                            when logged in. Uses PrivateRoute component.</p>
+                    </div>
+                </div>
+                <div class="code-block">
+                    <span class="cm">// App.jsx — Route configuration</span>
+                    &lt;<span class="obj">Routes</span>&gt;
+                    &lt;<span class="obj">Route</span> path=<span class="str">"/"</span> element={&lt;<span
+                        class="fn">HomePage</span>/&gt;} /&gt;
+                    &lt;<span class="obj">Route</span> path=<span class="str">"/category/:category"</span>
+                    element={&lt;<span class="fn">CategoryPage</span>/&gt;} /&gt;
+                    &lt;<span class="obj">Route</span> path=<span class="str">"/search"</span> element={&lt;<span
+                        class="fn">SearchPage</span>/&gt;} /&gt;
+                    &lt;<span class="obj">Route</span> path=<span class="str">"/saved"</span> element={&lt;<span
+                        class="fn">PrivateRoute</span>&gt;&lt;<span class="fn">SavedPage</span>/&gt;&lt;/<span
+                        class="fn">PrivateRoute</span>&gt;} /&gt;
+                    &lt;/<span class="obj">Routes</span>&gt;
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: COMPONENTS -->
+        <div class="slide" id="slide-10">
+            <div class="slide-content">
+                <p class="slide-label">Frontend</p>
+                <h2 class="slide-title">Reusable <span>Components</span></h2>
+                <div class="grid-2">
+                    <div>
+                        <ul class="checklist">
+                            <li><span class="icon icon-blue">🔝</span>
+                                <div><strong>Header.jsx</strong> — Top navigation bar with logo, category links, search
+                                    icon, login/register or user menu. Changes dynamically based on auth state.</div>
+                            </li>
+                            <li><span class="icon icon-purple">🎴</span>
+                                <div><strong>NewsCard.jsx</strong> — Displays a single news article with image, source,
+                                    title, description, and a "Save" button. The most used component.</div>
+                            </li>
+                            <li><span class="icon icon-green">⭐</span>
+                                <div><strong>HeroCard.jsx</strong> — Large featured card for the top news story on the
+                                    homepage. More visual emphasis.</div>
+                            </li>
+                            <li><span class="icon icon-orange">🔒</span>
+                                <div><strong>PrivateRoute.jsx</strong> — A wrapper component. If user is NOT logged in,
+                                    it redirects to /login. Protects the SavedPage.</div>
+                            </li>
+                            <li><span class="icon icon-blue">⏳</span>
+                                <div><strong>Spinner.jsx</strong> — Loading spinner displayed while fetching data from
+                                    the API.</div>
+                            </li>
+                            <li><span class="icon icon-purple">🦶</span>
+                                <div><strong>Footer.jsx</strong> — Bottom footer with project info and links.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p style="color:#6366f1;font-weight:700;margin-bottom:10px;">PrivateRoute — How it Works</p>
+                        <div class="code-block">
+                            <span class="cm">// components/PrivateRoute.jsx</span>
+                            <span class="kw">import</span> { Navigate } from <span
+                                class="str">'react-router-dom'</span>;
+                            <span class="kw">import</span> { useAuth } from <span
+                                class="str">'../context/AuthContext'</span>;
+
+                            <span class="kw">function</span> <span class="fn">PrivateRoute</span>({ children }) {
+                            <span class="kw">const</span> { user } = <span class="fn">useAuth</span>();
+                            <span class="cm">// If not logged in → redirect to login</span>
+                            <span class="kw">return</span> user
+                            ? children
+                            : &lt;<span class="obj">Navigate</span> to=<span class="str">"/login"</span> replace /&gt;;
+                            }
+                        </div>
+                        <p style="color:#a855f7;font-weight:700;margin:14px 0 10px;">AuthContext — Global State</p>
+                        <div class="code-block">
+                            <span class="cm">// context/AuthContext.js</span>
+                            <span class="cm">// Stores user info globally so all</span>
+                            <span class="cm">// components can check login status</span>
+                            <span class="kw">const</span> AuthContext = <span class="fn">createContext</span>();
+                            <span class="cm">// Any component can call:</span>
+                            <span class="kw">const</span> { user, login, logout } = <span class="fn">useAuth</span>();
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: DATA FLOW -->
+        <div class="slide" id="slide-11">
+            <div class="slide-content">
+                <p class="slide-label">Concept</p>
+                <h2 class="slide-title">Complete <span>Data Flow</span></h2>
+                <p style="color:#94a3b8;margin-bottom:20px;font-size:0.85rem">Trace a request from the browser all the
+                    way to NewsAPI.org and back:</p>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div class="flow-box" style="text-align:center;">1️⃣ &nbsp; User visits <strong>HomePage</strong> in
+                        browser</div>
+                    <div style="text-align:center;color:#6366f1;font-size:1.2rem;">↓</div>
+                    <div class="flow-box" style="text-align:center;">2️⃣ &nbsp; React component runs:
+                        <code>axios.get('/api/news/headlines')</code> inside <code>useEffect</code>
+                    </div>
+                    <div style="text-align:center;color:#6366f1;font-size:1.2rem;">↓</div>
+                    <div class="flow-box" style="text-align:center;">3️⃣ &nbsp; Express server receives GET request at
+                        <code>/api/news/headlines</code>
+                    </div>
+                    <div style="text-align:center;color:#6366f1;font-size:1.2rem;">↓</div>
+                    <div class="flow-box" style="text-align:center;">4️⃣ &nbsp; <code>newsController.js</code> calls
+                        NewsAPI: <code>axios.get('https://newsapi.org/v2/top-headlines?apiKey=...')</code></div>
+                    <div style="text-align:center;color:#6366f1;font-size:1.2rem;">↓</div>
+                    <div class="flow-box" style="text-align:center;">5️⃣ &nbsp; NewsAPI returns JSON array of articles
+                        to backend</div>
+                    <div style="text-align:center;color:#6366f1;font-size:1.2rem;">↓</div>
+                    <div class="flow-box" style="text-align:center;">6️⃣ &nbsp; Backend sends
+                        <code>res.json(articles)</code> to frontend
+                    </div>
+                    <div style="text-align:center;color:#6366f1;font-size:1.2rem;">↓</div>
+                    <div class="flow-box" style="text-align:center;">7️⃣ &nbsp; React sets state:
+                        <code>setArticles(data)</code> → UI re-renders with news cards
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: KEY CONCEPTS -->
+        <div class="slide" id="slide-12">
+            <div class="slide-content">
+                <p class="slide-label">Concepts</p>
+                <h2 class="slide-title">Key <span>Concepts Explained</span></h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-icon">🔐</div>
+                        <h3>JWT (JSON Web Token)</h3>
+                        <p>A compact, URL-safe token consisting of 3 parts: <strong>Header.Payload.Signature</strong>.
+                            Server signs it with a secret key. Client sends it on every request. Server verifies it
+                            without hitting the database — "stateless auth".</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔑</div>
+                        <h3>bcrypt Password Hashing</h3>
+                        <p>Converts plain passwords into an irreversible hash using a "salt" (random data). Even if DB
+                            is stolen, passwords can't be recovered. Uses 10 salt rounds by default in this project.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔁</div>
+                        <h3>REST API</h3>
+                        <p>Architectural style using HTTP methods: GET (read), POST (create), PUT (update), DELETE
+                            (remove). Each endpoint is a URL representing a resource. Stateless — no session memory on
+                            server.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🌐</div>
+                        <h3>CORS</h3>
+                        <p>Cross-Origin Resource Sharing. Browser security blocks JS from calling APIs on different
+                            domains. Our backend explicitly allows <code>localhost:5173</code> so React can talk to
+                            Express.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⚛️</div>
+                        <h3>React Context API</h3>
+                        <p>Solves "prop drilling" — passing data through many component levels. AuthContext stores user
+                            info globally. Any component can access it via <code>useAuth()</code> hook.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🍃</div>
+                        <h3>Mongoose ODM</h3>
+                        <p>Object Document Mapper — lets us define schemas (structure) for MongoDB collections. Provides
+                            methods like <code>User.findOne()</code>, <code>User.create()</code> instead of raw MongoDB
+                            queries.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: FEATURES -->
+        <div class="slide" id="slide-13">
+            <div class="slide-content">
+                <p class="slide-label">Features</p>
+                <h2 class="slide-title">Project <span>Features</span></h2>
+                <div class="grid-2">
+                    <div>
+                        <p style="color:#86efac;font-weight:700;margin-bottom:12px;">✅ Implemented Features</p>
+                        <ul class="checklist">
+                            <li><span class="icon icon-green">✓</span>
+                                <div>User Registration &amp; Login with JWT Authentication</div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Browse Top Headlines from real NewsAPI.org</div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Filter news by Category (Tech, Sports, Business, Health, Science, Entertainment)
+                                </div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Search news by any keyword</div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Save articles to personal reading list</div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Remove saved articles</div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Protected routes — Saved page requires login</div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Password hashing with bcrypt</div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Responsive dark-mode UI</div>
+                            </li>
+                            <li><span class="icon icon-green">✓</span>
+                                <div>Global error handling middleware</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p style="color:#6366f1;font-weight:700;margin-bottom:12px;">🏗️ Technical Highlights</p>
+                        <ul class="checklist">
+                            <li><span class="icon icon-blue">⚙</span>
+                                <div>MVC Architecture — Models, Controllers, Routes separated</div>
+                            </li>
+                            <li><span class="icon icon-blue">⚙</span>
+                                <div>ES Modules (import/export) throughout backend</div>
+                            </li>
+                            <li><span class="icon icon-blue">⚙</span>
+                                <div>Async/Await with express-async-handler</div>
+                            </li>
+                            <li><span class="icon icon-blue">⚙</span>
+                                <div>MongoDB compound unique index on saved articles</div>
+                            </li>
+                            <li><span class="icon icon-blue">⚙</span>
+                                <div>Environment variables via .env for all secrets</div>
+                            </li>
+                            <li><span class="icon icon-blue">⚙</span>
+                                <div>React Router v6 with dynamic URL params</div>
+                            </li>
+                            <li><span class="icon icon-blue">⚙</span>
+                                <div>Vite build tool for fast frontend development</div>
+                            </li>
+                            <li><span class="icon icon-blue">⚙</span>
+                                <div>Nodemon for backend hot-reload in dev</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: VIVA Q1 -->
+        <div class="slide" id="slide-14">
+            <div class="slide-content">
+                <p class="slide-label">Viva Preparation — Part 1</p>
+                <h2 class="slide-title">Expected <span>Viva Questions</span></h2>
+
+                <div class="viva-q">
+                    <span class="tag tag-easy">Easy</span>
+                    <p class="q">Q1. What is MERN stack? Which technologies are used in this project?</p>
+                    <p class="a">MERN = MongoDB, Express.js, React.js, Node.js. This project uses all four: MongoDB
+                        (database), Express + Node (backend), React (frontend). Additionally, JWT for auth, bcrypt for
+                        password hashing, and Axios for HTTP calls.</p>
+                </div>
+
+                <div class="viva-q">
+                    <span class="tag tag-easy">Easy</span>
+                    <p class="q">Q2. What is the purpose of the .env file? Why shouldn't it be committed to GitHub?</p>
+                    <p class="a">The .env file stores secret values like DATABASE_URL, JWT_SECRET, NEWS_API_KEY. If
+                        pushed to GitHub, anyone can read your secrets and misuse your API key or access your database.
+                        It is listed in .gitignore to prevent accidental commits.</p>
+                </div>
+
+                <div class="viva-q">
+                    <span class="tag tag-med">Medium</span>
+                    <p class="q">Q3. What is JWT? How does it work in Newsly?</p>
+                    <p class="a">JWT (JSON Web Token) has 3 parts: Header (algorithm), Payload (user ID), Signature
+                        (HMAC with secret key). On login, the server signs a token and returns it. The frontend stores
+                        it in localStorage. On every protected API call, it's sent in the Authorization header. The
+                        backend verifies the signature without a DB lookup — making it "stateless".</p>
+                </div>
+
+                <div class="viva-q">
+                    <span class="tag tag-med">Medium</span>
+                    <p class="q">Q4. Why is bcrypt used instead of storing passwords directly?</p>
+                    <p class="a">Plain text passwords are catastrophic if the DB is hacked. bcrypt applies a one-way
+                        hashing function with a random "salt" making two identical passwords produce different hashes.
+                        It uses "work factor" (10 rounds here) making brute-force attacks computationally expensive. The
+                        matchPassword method uses bcrypt.compare() to verify during login.</p>
+                </div>
+
+                <div class="viva-q">
+                    <span class="tag tag-med">Medium</span>
+                    <p class="q">Q5. What is CORS and why is it needed in this project?</p>
+                    <p class="a">CORS (Cross-Origin Resource Sharing) is a browser security policy that blocks web pages
+                        from making requests to a different origin (domain:port). Our React frontend runs on port 5173
+                        and talks to the Express backend on port 5000 — different origins. The cors() middleware on the
+                        backend explicitly allows this, so the browser permits the requests.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 15: VIVA Q2 -->
+        <div class="slide" id="slide-15">
+            <div class="slide-content">
+                <p class="slide-label">Viva Preparation — Part 2</p>
+                <h2 class="slide-title">More <span>Viva Questions</span></h2>
+
+                <div class="viva-q">
+                    <span class="tag tag-med">Medium</span>
+                    <p class="q">Q6. What is the difference between authentication and authorization?</p>
+                    <p class="a">Authentication = verifying WHO you are (login with email/password). Authorization =
+                        verifying WHAT you're allowed to do (only logged-in users can access /api/saved). In Newsly,
+                        authMiddleware.js handles both: it first verifies the JWT (authentication), then attaches the
+                        user to req.user so the next handler can check permissions (authorization).</p>
+                </div>
+
+                <div class="viva-q">
+                    <span class="tag tag-med">Medium</span>
+                    <p class="q">Q7. What is the MVC pattern? How is it applied in the backend?</p>
+                    <p class="a">MVC = Model-View-Controller. Model = MongoDB schemas (User.js, SavedArticle.js) — data
+                        layer. Controller = business logic (authController, newsController, savedController) — what to
+                        do with data. View = the response sent (JSON). Routes connect URLs to controllers. This
+                        separation makes code organized and maintainable.</p>
+                </div>
+
+                <div class="viva-q">
+                    <span class="tag tag-hard">Hard</span>
+                    <p class="q">Q8. What is the difference between SQL and NoSQL? Why did you choose MongoDB?</p>
+                    <p class="a">SQL (MySQL/PostgreSQL) uses tables with fixed schemas, strict relationships, ACID
+                        transactions. NoSQL (MongoDB) uses flexible JSON-like documents, no fixed schema, horizontally
+                        scalable. MongoDB was chosen because news article structures can vary (different fields), it
+                        integrates naturally with JavaScript/Node.js via JSON, and Mongoose makes schema validation
+                        optional but available.</p>
+                </div>
+
+                <div class="viva-q">
+                    <span class="tag tag-hard">Hard</span>
+                    <p class="q">Q9. What does the unique compound index on {user, url} in SavedArticle do?</p>
+                    <p class="a">MongoDB creates an index that enforces uniqueness on the combination of user ID and
+                        article URL. This means the same user cannot save the same article URL twice. If they try,
+                        MongoDB throws a duplicate key error (code 11000). The backend can catch this and return a
+                        "Already saved" response instead of a crash.</p>
+                </div>
+
+                <div class="viva-q">
+                    <span class="tag tag-hard">Hard</span>
+                    <p class="q">Q10. What is the React Context API and why was it used instead of passing props?</p>
+                    <p class="a">Context API provides a way to share state globally without passing it through every
+                        component level ("prop drilling"). AuthContext stores the logged-in user and login/logout
+                        functions. Any component in the tree — Header, PrivateRoute, SavedPage — can call useAuth() to
+                        access them directly. Alternative would be Redux, but Context is simpler for this project size.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end slides-viewport -->
+
+    <script>
+        const totalSlides = 16;
+        let current = 0;
+
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach((s, i) => {
+                s.classList.remove('active', 'exit');
+                if (i === current) s.classList.add('active');
+            });
+            document.getElementById('counter').textContent = `${current + 1} / ${totalSlides}`;
+            document.getElementById('prevBtn').disabled = current === 0;
+            document.getElementById('nextBtn').disabled = current === totalSlides - 1;
+            document.getElementById('progress-bar').style.width = ((current + 1) / totalSlides * 100) + '%';
+        }
+
+        function changeSlide(dir) {
+            const next = current + dir;
+            if (next < 0 || next >= totalSlides) return;
+            current = next;
+            updateUI();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+        });
+
+        updateUI();
+    </script>
+</body>
+
+</html>
